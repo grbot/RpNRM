@@ -1,4 +1,5 @@
 ### To build
+```cd docker```
 ```docker build --tag rshiny .```
 
 ### To run
