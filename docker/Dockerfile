@@ -68,7 +68,7 @@ RUN conda env create -f /environment.yml && conda clean -a
 ENV PATH /usr/local/envs/hyphy/bin/:$PATH
 
 # Copy configuration files into the Docker image
-COPY ./shiny-server.conf  /etc/shiny-server/shiny-server.conf
+COPY R/shiny-server.conf  /etc/shiny-server/shiny-server.conf
 RUN mkdir /srv/shiny-server/app
 COPY R/rroot.R /srv/shiny-server/app
 COPY R/app.R /srv/shiny-server/app
@@ -80,11 +80,11 @@ RUN ["chmod", "+w", "/srv/shiny-server/app"]
 RUN ["chown","shiny:shiny","-R","/srv/shiny-server/app"]
 
 # Make the ShinyApp available at port 80
-EXPOSE 443
+EXPOSE 80
 
 
 # Copy further configuration files into the Docker image
-COPY shiny-server.sh /usr/bin/shiny-server.sh
+COPY R/shiny-server.sh /usr/bin/shiny-server.sh
 
 RUN ["chmod", "+x", "/usr/bin/shiny-server.sh"]
 
