@@ -90,7 +90,7 @@ global TA = 1;
 global TC = 1;
 global TG = 1;
 
-DataSet 		ds = ReadDataFile("HIVM.fasta");
+DataSet 		ds = ReadDataFile("seq.fasta");
 
 DataSetFilter nucFilter = CreateFilter (ds,1);
 HarvestFrequencies (nucFreq,nucFilter,1,1,1);

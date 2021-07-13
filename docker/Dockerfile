@@ -1,14 +1,16 @@
-# Install R version 3.5.1
-FROM r-base:3.5.1
+# Install R version 3.6.3
+FROM r-base:3.6.3
 
 # Install Ubuntu packages
-RUN apt-get -qq update && apt-get install -y \
-    sudo \
+
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN rm -rf /var/lib/apt/lists/* && apt-get update --fix-missing && apt-get upgrade -y && apt-get install -y  \
     gdebi-core \
     pandoc \
     pandoc-citeproc \
     libcurl4-gnutls-dev \
-    libcairo2-dev/unstable \
+    libcairo2-dev \
     libxt-dev \
     libssl-dev \
     libmagick++-dev \
@@ -33,7 +35,9 @@ RUN apt-get -qq -y autoremove \
 
 # Install R packages that are required
 RUN R -e "install.packages(c('shiny', 'shinydashboard'), repos='http://cran.rstudio.com/')"
+
 RUN R -e "install.packages('BiocManager')"
+RUN R -e "BiocManager::install('rmarkdown')"
 RUN R -e "BiocManager::install('DECIPHER')"
 RUN R -e "BiocManager::install('phyloseq')"
 RUN R -e "BiocManager::install('ggtree')"
@@ -43,7 +47,18 @@ RUN R -e "BiocManager::install('rversions')"
 RUN R -e "BiocManager::install('devtools')"
 RUN R -e "BiocManager::install('magick')"
 RUN R -e "BiocManager::install('shinydashboard')"
-RUN R -e "BiocManager::install('rmarkdown')"
+RUN R -e "BiocManager::install('ape')"
+RUN R -e "BiocManager::install('magrittr')"
+RUN R -e "BiocManager::install('ggplot2')"
+RUN R -e "BiocManager::install('Biostrings')"
+RUN R -e "BiocManager::install('dplyr')"
+RUN R -e "BiocManager::install('caper')"
+RUN R -e "BiocManager::install('geiger')"
+RUN R -e "BiocManager::install('DT')"
+RUN R -e "BiocManager::install('dashboardthemes')"
+
+
+
 
 # Setup hyphy
 ENV PATH /opt/conda/bin:$PATH
@@ -53,22 +68,23 @@ RUN conda env create -f /environment.yml && conda clean -a
 ENV PATH /usr/local/envs/hyphy/bin/:$PATH
 
 # Copy configuration files into the Docker image
-COPY R/shiny-server.conf  /etc/shiny-server/shiny-server.conf
+COPY ./shiny-server.conf  /etc/shiny-server/shiny-server.conf
 RUN mkdir /srv/shiny-server/app
+COPY R/rroot.R /srv/shiny-server/app
 COPY R/app.R /srv/shiny-server/app
 COPY scripts/REROOT.sh /srv/shiny-server/app
 COPY scripts/likeli.bf /srv/shiny-server/app
-COPY data/bestTree.nwk /srv/shiny-server/app
-COPY data/HIVM.fasta /srv/shiny-server/app
-COPY data/HIVM.fasta.nwk /srv/shiny-server/app
+COPY data/seq.fasta /srv/shiny-server/app
+COPY data/seq.nwk /srv/shiny-server/app
 RUN ["chmod", "+w", "/srv/shiny-server/app"]
 RUN ["chown","shiny:shiny","-R","/srv/shiny-server/app"]
 
 # Make the ShinyApp available at port 80
-EXPOSE 80
+EXPOSE 443
+
 
 # Copy further configuration files into the Docker image
-COPY R/shiny-server.sh /usr/bin/shiny-server.sh
+COPY shiny-server.sh /usr/bin/shiny-server.sh
 
 RUN ["chmod", "+x", "/usr/bin/shiny-server.sh"]
 
