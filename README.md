@@ -1,10 +1,10 @@
 ### To build
 ```cd docker```
 
-```docker build --tag rshiny .```
+```docker build --tag RpNRM .```
 
 ### To run
-```docker run -p 80:80 rshiny```
+```docker run -p 80:80 RpNRM```
 
 ### Go to
-```http://localhost/app``` in browser
+```http://localhost/RpNRM``` in browser

@@ -2,8 +2,6 @@
 FROM r-base:3.6.3
 
 # Install Ubuntu packages
-
-
 ARG DEBIAN_FRONTEND=noninteractive
 RUN rm -rf /var/lib/apt/lists/* && apt-get update --fix-missing && apt-get upgrade -y && apt-get install -y  \
     gdebi-core \
@@ -57,9 +55,6 @@ RUN R -e "BiocManager::install('geiger')"
 RUN R -e "BiocManager::install('DT')"
 RUN R -e "BiocManager::install('dashboardthemes')"
 
-
-
-
 # Setup hyphy
 ENV PATH /opt/conda/bin:$PATH
 COPY environment.yml /
@@ -69,15 +64,15 @@ ENV PATH /usr/local/envs/hyphy/bin/:$PATH
 
 # Copy configuration files into the Docker image
 COPY R/shiny-server.conf  /etc/shiny-server/shiny-server.conf
-RUN mkdir /srv/shiny-server/app
-COPY R/rroot.R /srv/shiny-server/app
-COPY R/app.R /srv/shiny-server/app
-COPY scripts/REROOT.sh /srv/shiny-server/app
-COPY scripts/likeli.bf /srv/shiny-server/app
-COPY data/seq.fasta /srv/shiny-server/app
-COPY data/seq.nwk /srv/shiny-server/app
-RUN ["chmod", "+w", "/srv/shiny-server/app"]
-RUN ["chown","shiny:shiny","-R","/srv/shiny-server/app"]
+RUN mkdir /srv/shiny-server/RpNRM
+COPY R/rroot.R /srv/shiny-server/RpNRM
+COPY R/app.R /srv/shiny-server/RpNRM
+COPY scripts/REROOT.sh /srv/shiny-server/RpNRM
+COPY scripts/likeli.bf /srv/shiny-server/RpNRM
+COPY data/seq.fasta /srv/shiny-server/RpNRM
+COPY data/seq.nwk /srv/shiny-server/RpNRM
+RUN ["chmod", "+w", "/srv/shiny-server/RpNRM"]
+RUN ["chown","shiny:shiny","-R","/srv/shiny-server/RpNRM"]
 
 # Make the ShinyApp available at port 80
 EXPOSE 80
