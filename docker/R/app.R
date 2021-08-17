@@ -1,9 +1,7 @@
-## Only run examples in interactive R sessions
-###########rerooting application UI############UI= user interface######
-##setwd("/home/rita/Desktop/UCT-WORK/ROOTING/")
-setwd("/srv/shiny-server/RpNRM/")
-#setwd("~/Downloads/rita/docker/data")
-#setwd("~/Downloads/rita/docker/data/HIVM/rootingtest")
+##RpNRM APPLICATION
+#change to right directory
+setwd("/srv/shiny-server/RpNRM/data")
+
 library("phangorn")
 library("ape")
 library("devtools")
@@ -98,7 +96,7 @@ if (interactive()) {
       tree<-read.tree(tree_load)
       reroot.all(tree)
       system("bash REROOT.sh",wait = TRUE)
-      b<-read.csv("data.csv",header = FALSE)
+      b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
       for (i in 1:length(b)) {
         b<-read.csv("data.csv",header = FALSE)
         b1<-read.tree("data1.nwk")
@@ -114,7 +112,7 @@ if (interactive()) {
       })
       
       
-      b<-read.csv("data.csv",header = FALSE)
+      b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
       b<-data.frame(b)
       output$treebylikelihood <- renderPlot({ ggplot(data=b, aes(x=b$V1))+geom_density(fill="#868686FF", color = "#EFC000FF")+
           geom_vline(aes(xintercept = mean(b$V1)),linetype = "dashed", size = 0.6)+geom_rug()+xlab("Tree Log-Likelihoods")+
