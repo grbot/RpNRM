@@ -90,7 +90,8 @@ global TA = 1;
 global TC = 1;
 global TG = 1;
 
-DataSet 		ds = ReadDataFile("seq.fasta");
+
+DataSet 		ds = ReadDataFile("/srv/shiny-server/RpNRM/data/seq.fasta");
 
 DataSetFilter nucFilter = CreateFilter (ds,1);
 HarvestFrequencies (nucFreq,nucFilter,1,1,1);
@@ -107,7 +108,9 @@ fscanf (PROMPT_FOR_FILE, "Tree", givenTree);
 
 
 Tree T = givenTree;
+/*tree_string=format(givenTree,1,1);*/
 LikelihoodFunction lf_nrev = ( nucFilter, givenTree );
+
 Optimize ( res_nrev, lf_nrev );
 
 function maximumlikelihood ( LIKELIHOODArray& ) {
@@ -115,17 +118,19 @@ function maximumlikelihood ( LIKELIHOODArray& ) {
 	LIKELIHOODArray = { { res_nrev[1][0]} };
 	for (likelihood = 0; likelihood < Columns ( LIKELIHOODArray ); likelihood = likelihood + 1 ){
                  if(LIKELIHOODArray[likelihood] is maximum){
-                     fprintf ( bestree,T);
+                    /* bestree=format(givenTree,1,1)*/
+                 
+                     fprintf (besttree, T);
                   }
 
 
-      }fprintf ( bestree,T);
+      }fprintf (besttree, T);
 
 
 }
 
 
-/*fprintf ( stdout, lf_nrev, "\n" );*/
+/*fprintf ( stdout, lf_nrev, "\n" ); fprintf ( bestree,bestree)*/
 
 /* fprintf ( stdout, res_nrev, "\n" ); */
 
@@ -155,10 +160,18 @@ for ( h = 0; h < 4; h = h + 1 ) {
 
 Export ( modelstr, NREVModel );
 
-/*The given tree with the highest likelihood*/
+/*The given tree with the highest likelihoodfprintf ("besttree.nwk",bestree,"\n");*/
+/*fprintf ( "datanonoptimized.csv",lf_nrev[1][0],"\n");*/
 fprintf ( "data.csv",res_nrev[1][0],"\n");
 
-fprintf ("data1.nwk",T,"\n");
+
+
+/*fprintf (stdout, "Tree string: ", treestring, "\nTree with branch lengths: ", Format (arbol, 1,1), "\n");*/
+
+
+fprintf ("data1.nwk", Format (givenTree, 1,1),";\n");
+
+
 
 
 

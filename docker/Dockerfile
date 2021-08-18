@@ -65,12 +65,14 @@ ENV PATH /usr/local/envs/hyphy/bin/:$PATH
 # Copy configuration files into the Docker image
 COPY R/shiny-server.conf  /etc/shiny-server/shiny-server.conf
 RUN mkdir /srv/shiny-server/RpNRM
-COPY R/rroot.R /srv/shiny-server/RpNRM
+RUN mkdir /srv/shiny-server/RpNRM/data
+RUN mkdir /srv/shiny-server/RpNRM/scripts
+COPY R/rroot.R /srv/shiny-server/RpNRM/data
 COPY R/app.R /srv/shiny-server/RpNRM
-COPY scripts/REROOT.sh /srv/shiny-server/RpNRM
-COPY scripts/likeli.bf /srv/shiny-server/RpNRM
-COPY data/seq.fasta /srv/shiny-server/RpNRM
-COPY data/seq.nwk /srv/shiny-server/RpNRM
+COPY scripts/REROOT.sh /srv/shiny-server/RpNRM/scripts
+COPY scripts/likeli.bf /srv/shiny-server/RpNRM/scripts
+COPY data/seq.fasta /srv/shiny-server/RpNRM/data
+COPY data/seq.nwk /srv/shiny-server/RpNRM/data
 RUN ["chmod", "+w", "/srv/shiny-server/RpNRM"]
 RUN ["chown","shiny:shiny","-R","/srv/shiny-server/RpNRM"]
 

@@ -1,8 +1,7 @@
-## Only run examples in interactive R sessions
-###########rerooting application UI############UI= user interface######
-##setwd("/home/rita/Desktop/UCT-WORK/ROOTING/")
-#setwd("/srv/shiny-server/app/")
-#setwd("~/Downloads/rita/docker/data")
+##RpNRM APPLICATION
+#change to right directory
+setwd("/srv/shiny-server/RpNRM/data")
+
 library("phangorn")
 library("ape")
 library("devtools")
@@ -32,20 +31,20 @@ if (interactive()) {
   header <- dashboardHeader(titleWidth = 1250,title = "Phylogenetic Analysis: Rooting Phylogenetic Trees using Non-Reversible Nucleotide Substitution Models")
   
   sidebar <- dashboardSidebar(menuItem("OWNERSHIP", tabName = "model",
-                                        box(title="Developer.",background = "green",width = 150,
-                                            "The web application has been developed by Rita Sianga (PhD student) and professor Darren Martin, University of Cape Town.")),
-                                    
-                                              
-                                       menuItem("ABOUT",tabName="model",box(title="Application Information",background = "green",width = 150,
-                                                    "The application roots phylogenetic trees using non-reversible nucleotide substitution stocastic models. AT the core of this rooting method is a twelve (12) rate parameter model known as NREV12 which is defined using a software package HyPhy (hypothesis testing using phylogenies). For any uploaded phylogenetic tree, the application uses R phytools function reroot that re-roots a phylogenetic tree at an arbitrary position along every edge. ")),
-                                                    
-                                       menuItem("INSTRUCTIONS",tabName = "model",box(title="Instructions",
-                                                    background="green", width = 150,
-                                                    "Upload a phylogenetic tree in newick format and a sequence alignment titled seq.fasta. Once the upload is complete, Run the application by clicking on the run button.")),menuItem("DATA INPUT", tabName = "model",
-                                                                   fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file saved  seq.fasta", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
-                                                                   checkboxInput("header", "Header", TRUE)),width=350,tabItem(tabName="import",mainPanel(
-                                                                                                                                                                              tableOutput("results"),textOutput("system")
-                                                                                                                                                                            )))
+                                       box(title="Developer.",background = "green",width = 150,
+                                           "The web application has been developed by Rita Sianga (PhD student) and professor Darren Martin, University of Cape Town.")),
+                              
+                              
+                              menuItem("ABOUT",tabName="model",box(title="Application Information",background = "green",width = 150,
+                                                                   "The application roots phylogenetic trees using non-reversible nucleotide substitution stocastic models. AT the core of this rooting method is a twelve (12) rate parameter model known as NREV12 which is defined using a software package HyPhy (hypothesis testing using phylogenies). For any uploaded phylogenetic tree, the application uses R phytools function reroot that re-roots a phylogenetic tree at an arbitrary position along every edge. ")),
+                              
+                              menuItem("INSTRUCTIONS",tabName = "model",box(title="Instructions",
+                                                                            background="green", width = 150,
+                                                                            "Upload a phylogenetic tree in newick format and a sequence alignment titled seq.fasta. Once the upload is complete, Run the application by clicking on the run button.")),menuItem("DATA INPUT", tabName = "model",
+                                                                                                                                                                                                                                                                fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file saved  seq.fasta", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
+                                                                                                                                                                                                                                                                checkboxInput("header", "Header", TRUE)),width=350,tabItem(tabName="import",mainPanel(
+                                                                                                                                                                                                                                                                  tableOutput("results"),textOutput("system")
+                                                                                                                                                                                                                                                                )))
   
   body <- dashboardBody(downloadButton("downloadData", "Download the rooted tree"),shinyDashboardThemes(
     theme = "blue_gradient"
@@ -97,13 +96,13 @@ if (interactive()) {
       tree<-read.tree(tree_load)
       reroot.all(tree)
       system("bash REROOT.sh",wait = TRUE)
-      b<-read.csv("data.csv",header = FALSE)
+      b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
       for (i in 1:length(b)) {
         b<-read.csv("data.csv",header = FALSE)
         b1<-read.tree("data1.nwk")
         which.max(b$V1)
-        write.tree(b1[i],file = "bestTree.nwk")
-        T<-read.tree("bestTree.nwk")
+        write.tree(b1[i],file = "rooted.nwk")
+        T<-read.tree("rooted.nwk")
         output$besttree <- renderPlot({plot(T) })
         
         
@@ -113,7 +112,7 @@ if (interactive()) {
       })
       
       
-      b<-read.csv("data.csv",header = FALSE)
+      b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
       b<-data.frame(b)
       output$treebylikelihood <- renderPlot({ ggplot(data=b, aes(x=b$V1))+geom_density(fill="#868686FF", color = "#EFC000FF")+
           geom_vline(aes(xintercept = mean(b$V1)),linetype = "dashed", size = 0.6)+geom_rug()+xlab("Tree Log-Likelihoods")+
@@ -129,9 +128,9 @@ if (interactive()) {
     output$results <- renderTable({read_newick_tree_and_run ()$datapath})
     #output$system <- renderText({system("bash REROOT.sh",wait = TRUE)})
     output$downloadData<-downloadHandler(
-      filename = function(){paste("bestTree","nwk",sep = ".")}, 
+      filename = function(){paste("rooted","nwk",sep = ".")}, 
       content = function(RootedTree){
-        file.copy("bestTree.nwk", RootedTree)
+        file.copy("rooted.nwk", RootedTree)
       },
       contentType = "text/nwk"
     )
