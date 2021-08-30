@@ -18,7 +18,7 @@ library(caper)
 library(geiger)
 library("DT")
 library(dashboardthemes)
-if (interactive()) {
+
   
   
   #req({mydata})
@@ -143,4 +143,4 @@ if (interactive()) {
     
   }  
   shinyApp(ui, server)
-}
+
