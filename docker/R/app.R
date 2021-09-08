@@ -9,15 +9,15 @@ library("magrittr")
 library("ggplot2")
 library("Biostrings")
 library("ggtree")
-library(dplyr)
+library("dplyr")
 #library("ggtree")
 library("shiny")
 library("phytools")
-library(shinydashboard)
-library(caper)
-library(geiger)
+library("shinydashboard")
+library("caper")
+library("geiger")
 library("DT")
-library(dashboardthemes)
+library("dashboardthemes")
 
   
   
@@ -78,7 +78,7 @@ library(dashboardthemes)
   
   
   
-  source("rroot.R")
+  source("/srv/shiny-server/RpNRM/data/rroot.R")
   server <- function(input, output,session) {
     
     read_file<- reactive({
@@ -95,14 +95,14 @@ library(dashboardthemes)
       tree_load<-read_file()
       tree<-read.tree(tree_load)
       reroot.all(tree)
-      system("bash REROOT.sh",wait = TRUE)
+      system("bash /srv/shiny-server/RpNRM/scripts/REROOT.sh",wait = TRUE)
       b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
       for (i in 1:length(b)) {
-        b<-read.csv("data.csv",header = FALSE)
-        b1<-read.tree("data1.nwk")
+        b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
+        b1<-read.tree("/srv/shiny-server/RpNRM/data/data1.nwk")
         which.max(b$V1)
         write.tree(b1[i],file = "rooted.nwk")
-        T<-read.tree("rooted.nwk")
+        T<-read.tree("/srv/shiny-server/RpNRM/data/rooted.nwk")
         output$besttree <- renderPlot({plot(T) })
         
         
