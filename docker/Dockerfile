@@ -70,10 +70,10 @@ RUN mkdir /srv/shiny-server/RpNRM/data
 RUN mkdir /srv/shiny-server/RpNRM/scripts
 COPY R/rroot.R /srv/shiny-server/RpNRM/data
 COPY R/app.R /srv/shiny-server/RpNRM
-COPY scripts/REROOT.sh /srv/shiny-server/RpNRM/scripts
-COPY scripts/likeli.bf /srv/shiny-server/RpNRM/scripts
-COPY data/seq.fasta /srv/shiny-server/RpNRM/data
-COPY data/seq.nwk /srv/shiny-server/RpNRM/data
+COPY scripts/REROOT.sh /srv/shiny-server/RpNRM/data
+COPY scripts/likeli.bf /srv/shiny-server/RpNRM/data
+#COPY data/seq.fasta /srv/shiny-server/RpNRM/data
+#COPY data/seq.nwk /srv/shiny-server/RpNRM/data
 RUN ["chmod", "+w", "/srv/shiny-server/RpNRM"]
 RUN ["chown","shiny:shiny","-R","/srv/shiny-server/RpNRM"]
 
