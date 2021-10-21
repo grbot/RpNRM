@@ -91,7 +91,7 @@ global TC = 1;
 global TG = 1;
 
 
-DataSet 		ds = ReadDataFile("/srv/shiny-server/RpNRM/data/0.fasta");
+DataSet 		ds = ReadDataFile("/srv/shiny-server/rpnrm/0.fasta");
 
 DataSetFilter nucFilter = CreateFilter (ds,1);
 HarvestFrequencies (nucFreq,nucFilter,1,1,1);

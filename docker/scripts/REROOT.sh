@@ -1,11 +1,13 @@
 #!/bin/sh
 
-
-for files in /srv/shiny-server/RpNRM/data/*.nwk
+rm data.csv
+rm data1.nwk
+cd /srv/shiny-server/rpnrm
+for files in /srv/shiny-server/rpnrm/*.nwk
 do
 
-  cd /srv/shiny-server/RpNRM/data
-  /usr/local/envs/hyphy/bin/hyphy  /srv/shiny-server/RpNRM/data/likeli.bf $files 
+  #cd /srv/shiny-server/rpnrm
+  /usr/local/envs/hyphy/bin/hyphy  /srv/shiny-server/rpnrm/likeli.bf $files 
    
 
 

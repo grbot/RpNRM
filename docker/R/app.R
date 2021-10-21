@@ -1,9 +1,9 @@
 
 
-##RpNRM APPLICATION
+##rpnrm APPLICATION
 #change to right directory
-setwd("/srv/shiny-server/RpNRM/data")
-
+setwd("/srv/shiny-server/rpnrm")
+options(shiny.sanitize.errors = FALSE)
 library("phangorn")
 library("ape")
 library("devtools")
@@ -23,27 +23,24 @@ library("dashboardthemes")
 
 
 
-#req({mydata})
-#tree<-mydata
-#reroot.all(tree)
 
 frow1<-fluidRow( valueBoxOutput("value1"), valueBoxOutput("value22"))
-frow2<-fluidRow( box( title = "Tree Maximum Likelihoods Distribution Plot",status = "primary", solidHeader=TRUE, collapsible=FALSE,plotOutput("treebylikelihood",height ="300px")),box(    title = "Rooted Phylogenetic Tree Plot"    ,status = "primary"   ,solidHeader = TRUE    ,collapsible = TRUE     ,plotOutput("besttree", height = "300px") ))
-
-header <- dashboardHeader(titleWidth = 1250,title = "Phylogenetic Analysis: Rooting Phylogenetic Trees using Non-Reversible Nucleotide Substitution Models")
+frow2<-fluidRow( box( title = "Tree Maximum Likelihoods Distribution Plot",status = "primary", solidHeader=TRUE, collapsible=FALSE,plotOutput("treebylikelihood",height ="300px")),box(    title = "Rooted Phylogenetic Tree Plot"    ,status = "primary"   ,solidHeader = TRUE    ,collapsible = TRUE     ,plotOutput("besttree", height = "300px") ),box(    title = "Model Test Results"    ,status = "primary"   ,solidHeader = TRUE    ,collapsible = TRUE     ,textOutput("test") ))
+frow3<-fluidRow(valueBoxOutput("aic"))
+header <- dashboardHeader(titleWidth = 1250,title = "Phylogenetic Analysis: Rooting Phylogenetic Trees using a Non-Reversible Nucleotide Substitution Model")
 
 sidebar <- dashboardSidebar(menuItem("OWNERSHIP", tabName = "model",
                                      box(title="Developer.",background = "green",width = 150,
-                                         "The web application has been developed by Rita Sianga (PhD student) and professor Darren Martin, University of Cape Town.")),
+                                         "The web application has been developed by Rita Sianga-Mete (PhD student) and professor Darren Martin, University of Cape Town.")),
                             
                             
                             menuItem("ABOUT",tabName="model",box(title="Application Information",background = "green",width = 150,
-                                                                 "The application roots phylogenetic trees using non-reversible nucleotide substitution stocastic models. AT the core of this rooting method is a twelve (12) rate parameter model known as NREV12 which is defined using a software package HyPhy (hypothesis testing using phylogenies). For any uploaded phylogenetic tree, the application uses R phytools function reroot that re-roots a phylogenetic tree at an arbitrary position along every edge. ")),
+                                                                 "RpNRM is a web application that roots phylogenetic trees using a 12-rate non-reversible nucleotide substitution stocastic model (NREV12). For any uploaded phylogenetic tree, the application will first run a model test using hyphy (hypothesis testing using phylogenies) to compare AIC scores for GTR (6-rate reversible model), NREV6 (a six-rate non-reversible model and NREV12 model. If NREV12 is the best suited model for the dataset, RpNRM will then root the phylogenetic tree on the most porbable branch. If NREV12 is not the best suited model for your dataset, we advise you root the tree using other softwares that make use of the reversible models.")),
                             
                             menuItem("INSTRUCTIONS",tabName = "model",box(title="Instructions",
                                                                           background="green", width = 150,
-                                                                          "Upload a phylogenetic tree in newick format and a sequence alignment titled seq.fasta. Once the upload is complete, Run the application by clicking on the run button.")),menuItem("DATA INPUT", tabName = "model",
-                                                                                                                                                                                                                                                              fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file saved  seq.fasta", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
+                                                                          "Upload a phylogenetic tree in newick format and a sequence alignment in fasta format. Once the upload is complete, Run the application by clicking on the run button.")),menuItem("DATA INPUT", tabName = "model",
+                                                                                                                                                                                                                                                              fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
                                                                                                                                                                                                                                                               checkboxInput("header", "Header", TRUE)),width=350,tabItem(tabName="import",mainPanel(
                                                                                                                                                                                                                                                                 tableOutput("results"),textOutput("system")
                                                                                                                                                                                                                                                               )))
@@ -80,8 +77,8 @@ ui<-dashboardPage(header, sidebar, body,skin = "black")
 
 
 
-source("/srv/shiny-server/RpNRM/data/rroot.R")
-#source("~/rpnrmcorrectfile/RpNRM/docker/R/rroot.R")
+source("rroot.R")
+#source("~/rpnrmcorrectfile/rpnrm/docker/R/rroot.R")
 server <- function(input, output,session) {
   
   read_file<- reactive({
@@ -99,27 +96,41 @@ server <- function(input, output,session) {
   })
   read_newick_tree_and_run <- eventReactive(input$Run,{
     req(input$file1$datapath)
-    file.copy(input$file1$datapath, "/srv/shiny-server/RpNRM/data")
+    file.copy(input$file1$datapath, "/srv/shiny-server/rpnrm")
     tree_load<-read_file()
     tree<-read.tree(tree_load)
     reroot.all(tree)
     req(input$file2$datapath)
     ##copy from r datapath to direc
-    file.copy(input$file2$datapath, "/srv/shiny-server/RpNRM/data")
+    file.copy(input$file2$datapath, "/srv/shiny-server/rpnrm")
     #oldname<-input$file2$name      #input$file2$datapath
     #seq <- file.path(dirname(input$file2$datapath), basename(input$file2$name))
     #file.rename(from=oldname, to=seq.fasta)
     #input$file2$datapath<-seq.fasta
-    #file.copy(input$file2$datapath, "~/rpnrmcorrectfile/RpNRM/docker/data")
-    system("bash /srv/shiny-server/RpNRM/data/REROOT.sh",wait = TRUE)
-    b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
+    #file.copy(input$file2$datapath, "~/rpnrmcorrectfile/rpnrm/docker/data")
+    system("bash /srv/shiny-server/rpnrm/aic.sh",wait = TRUE)
+      v<-read.csv("/srv/shiny-server/rpnrm/aic.csv", header = FALSE, sep=";")
+      if(v[3,] > v[1,] || v[3,] > v[2,]){
+        #output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
+        output$test<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
+        stop()} else{
+         # output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
+          output$test<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
+          #renderText("NREV12 is the best fitting model for your dataset, wait while your phylogenetic tree gets rooted.")
+          
+          
+        }   
+      
+    system("bash /srv/shiny-server/rpnrm/REROOT.sh",wait = TRUE)
+   
+    b<-read.csv("/srv/shiny-server/rpnrm/data.csv",header = FALSE)
     for (i in 1:length(b)) {
-      b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
-      b1<-read.tree("/srv/shiny-server/RpNRM/data/data1.nwk")
+      b<-read.csv("/srv/shiny-server/rpnrm/data.csv",header = FALSE)
+      b1<-read.tree("/srv/shiny-server/rpnrm/data1.nwk")
       which.max(b$V1)
       write.tree(b1[i],file = "rooted.nwk")
-      T<-read.tree("/srv/shiny-server/RpNRM/data/rooted.nwk")
-      output$besttree <- renderPlot({plot(T) })
+      T<-read.tree("rooted.nwk")
+      output$besttree <- renderPlot({plot(T,no.margin=TRUE,edge.width=2) })
       
       
     }
@@ -128,7 +139,7 @@ server <- function(input, output,session) {
     })
     
     
-    b<-read.csv("/srv/shiny-server/RpNRM/data/data.csv",header = FALSE)
+    b<-read.csv("data.csv",header = FALSE)
     b<-data.frame(b)
     output$treebylikelihood <- renderPlot({ ggplot(data=b, aes(x=b$V1))+geom_density(fill="#868686FF", color = "#EFC000FF")+
         geom_vline(aes(xintercept = mean(b$V1)),linetype = "dashed", size = 0.6)+geom_rug()+xlab("Tree Log-Likelihoods")+
