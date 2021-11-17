@@ -3,6 +3,9 @@
 
 ```docker build --tag rpnrm .```
 
+### If you do not want to build the container pull it directly from GitHub packages like this
+```docker pull ghcr.io/grbot/rpnrm:master```
+
 ### To run
 ```docker run -p 80:80 rpnrm```
 
