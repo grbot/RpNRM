@@ -1,4 +1,5 @@
 
+   
 
 ##rpnrm APPLICATION
 #change to right directory
@@ -40,10 +41,10 @@ sidebar <- dashboardSidebar(menuItem("OWNERSHIP", tabName = "model",
                             menuItem("INSTRUCTIONS",tabName = "model",box(title="Instructions",
                                                                           background="green", width = 150,
                                                                           "Upload a phylogenetic tree in newick format and a sequence alignment in fasta format. Once the upload is complete, Run the application by clicking on the run button.")),menuItem("DATA INPUT", tabName = "model",
-                                                                                                                                                                                                                                                              fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
-                                                                                                                                                                                                                                                              checkboxInput("header", "Header", TRUE)),width=350,tabItem(tabName="import",mainPanel(
-                                                                                                                                                                                                                                                                tableOutput("results"),textOutput("system")
-                                                                                                                                                                                                                                                              )))
+                                                                                                                                                                                                                                                             fileInput("file1", "Choose newick file", accept = c(".nwk"), multiple = FALSE),fileInput("file2", "Choose a fasta file", accept = c(".fasta"), multiple = FALSE),actionButton("Run",label = "Run"),
+                                                                                                                                                                                                                                                             checkboxInput("header", "Header", TRUE)),width=350,tabItem(tabName="import",mainPanel(
+                                                                                                                                                                                                                                                               tableOutput("results"),textOutput("system")
+                                                                                                                                                                                                                                                             )))
 
 body <- dashboardBody(downloadButton("downloadData", "Download the rooted tree"),shinyDashboardThemes(
   theme = "blue_gradient"
@@ -109,26 +110,31 @@ server <- function(input, output,session) {
     #input$file2$datapath<-seq.fasta
     #file.copy(input$file2$datapath, "~/rpnrmcorrectfile/rpnrm/docker/data")
     system("bash /srv/shiny-server/rpnrm/aic.sh",wait = TRUE)
-      v<-read.csv("/srv/shiny-server/rpnrm/aic.csv", header = FALSE, sep=";")
-      if(v[3,] > v[1,] || v[3,] > v[2,]){
-        #output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
-        output$test<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
-        stop()} else{
-         # output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
-          output$test<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
-          #renderText("NREV12 is the best fitting model for your dataset, wait while your phylogenetic tree gets rooted.")
-          
-          
-        }   
-      
+    v<-read.csv("/srv/shiny-server/rpnrm/aic.csv", header = FALSE, sep=";")
+    if(v[3,] > v[1,] || v[3,] > v[2,]){
+      #output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
+      output$test<-renderText({"MODEL TEST RESULTS: NREV12 is not the best fitting model for your dataset. RpNRM will not root the input file."})
+      stop()} else{
+        #output$aic<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
+        output$test<-renderText({"MODEL TEST RESULTS: NREV12 is the best fitting model for your dataset, please wait while your input tree gets rooted."})
+        #renderText("NREV12 is the best fitting model for your dataset, wait while your phylogenetic tree gets rooted.")
+        
+        
+      }   
+    system("rm /srv/shiny-server/rpnrm/0.nwk", wait = TRUE)  
     system("bash /srv/shiny-server/rpnrm/REROOT.sh",wait = TRUE)
-   
+    file.copy(input$file1$datapath, "/srv/shiny-server/rpnrm")
+    
     b<-read.csv("/srv/shiny-server/rpnrm/data.csv",header = FALSE)
     for (i in 1:length(b)) {
       b<-read.csv("/srv/shiny-server/rpnrm/data.csv",header = FALSE)
-      b1<-read.tree("/srv/shiny-server/rpnrm/data1.nwk")
-      which.max(b$V1)
-      write.tree(b1[i],file = "rooted.nwk")
+      #b1<-read.tree("/srv/shiny-server/rpnrm/data1.nwk")
+      LRT<-which.max(b$V1)
+      m<-read.tree("0.nwk")
+      rooted<-reroot(m,m$edge[LRT,2],
+                         0.5*m$edge.length[LRT])
+      #if(!edge.lengths) trees[[i]]$edge.length<-NULL
+      write.tree(rooted,file = "rooted.nwk")
       T<-read.tree("rooted.nwk")
       output$besttree <- renderPlot({plot(T,no.margin=TRUE,edge.width=2) })
       
@@ -157,7 +163,7 @@ server <- function(input, output,session) {
   output$downloadData<-downloadHandler(
     filename = function(){paste("rooted","nwk",sep = ".")}, 
     content = function(RootedTree){
-      file.copy("rooted.nwk", RootedTree)
+      file.copy("/srv/shiny-server/rpnrm/rooted.nwk", RootedTree)
     },
     contentType = "text/nwk"
   )
@@ -170,5 +176,4 @@ server <- function(input, output,session) {
   
 }  
 shinyApp(ui, server)
-
 
