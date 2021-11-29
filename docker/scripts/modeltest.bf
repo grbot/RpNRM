@@ -1,12 +1,3 @@
-/* This batch implements a model test of a 12 rate NREV model versus a standard GTR and strandGTR model. the strand GTR model constrains rates so that AG := TC, not AG := GA as in the GTR model.
-
-Code by Wayne Delport, inspired by Darren P. Martin
-
-wdelport@mac.com
-19 February 2009
-
-*/
-
 /* user defined functions */
 function PopulateNucleotideModelMatrix ( ModelMatrixName& ) {
 
@@ -57,7 +48,7 @@ category c = (4, EQUAL, MEAN,
 		  	    CGammaDist(_x_,alpha+1,alpha)
 		  	 );
 	
-NREVBiasTerms = { { "c*AC*", "", "c*AT*", "c*CA*", "c*CG*", "c*CT*", "c*GA*", "c*GC*", "c*GT*", "c*TA*", "c*TC*", "c*TG*" } };
+NREVBiasTerms = { { "c*AC*", "c*", "c*AT*", "c*CA*", "c*CG*", "c*CT*", "c*GA*", "c*GC*", "c*GT*", "c*TA*", "c*TC*", "c*TG*" } };
 /* without * to remove constraints: see malemaLovesGoats */
 ratesArray = { { "AC", "", "AT", "CA", "CG", "CT", "GA", "GC", "GT", "TA", "TC", "TG" } };
 
@@ -263,7 +254,6 @@ fprintf ("MODELTEST RESULTS", "stGTR (all parameters): ", 2*(res_stgtr[1][1]) - 
 fprintf ( "MODELTEST RESULTS", "stGTR (rates only): ", 2*(res_stgtr[1][2]) - 2*res_stgtr[1][0], "\n" );
 fprintf ( "MODELTEST RESULTS", "NREV (all parameters): ", 2*(res_nrev[1][1]) - 2*res_nrev[1][0], "\n" );
 fprintf ( "MODELTEST RESULTS", "NREV (rates only): ", 2*(res_nrev[1][2]) - 2*res_nrev[1][0], "\n" ); */
-
 
 
 
