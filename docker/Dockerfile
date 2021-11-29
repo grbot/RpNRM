@@ -1,5 +1,5 @@
 # Install R version 3.6.3
-FROM r-base:3.6.3
+FROM r-base:4.1.0
 
 # Install Ubuntu packages
 ARG DEBIAN_FRONTEND=noninteractive
