@@ -7,7 +7,7 @@
 ```docker pull ghcr.io/grbot/rpnrm:master```
 
 ### To run
-```docker run -p 80:80 rpnrm```
+```docker run -p 3838:3838 rpnrm```
 
 ### Go to
-```http://localhost/rpnrm or http://localhost:3838/rpnrm/``` in browser
+```http://localhost:3838/rpnrm/``` in browser
