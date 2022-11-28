@@ -229,36 +229,8 @@ Export ( modelstr, NREVModel );
 gtr=2*(res_gtr[1][1]) - 2*res_gtr[1][0];
 nrev6= 2*(res_stgtr[1][1]) - 2*res_stgtr[1][0];
 nrev12= 2*(res_nrev[1][1]) - 2*res_nrev[1][0];
-/*df<-data.frame(gtr,nrev6,nrev12);*/
-/*fprintf ( "aic.csv","GTR\t"  ,gtr, "\nNREV6\t"  ,nrev6, "\nNREV12\t"  ,nrev12);*/
+
 fprintf ( "aic.csv" ,gtr, "\n"  ,nrev6, "\n"  ,nrev12);
-
-/*fprintf ( "aic.csv" , "GTR\n"  , "NREV6\n"  ,"NREV12\n");
-fprintf ( "aic.csv",gtr  ,nrev6 ,nrev12);*/
-/*seq=LAST_FILE_PATH; 
-fprintf("MODELTEST RESULTS",seq);
-
-fprintf ( "MODELTEST RESULTS", "\nLikelihood ratio tests\n" );
-fprintf ("MODELTEST RESULTS", "----------------------\n" );
-
-fprintf ( "MODELTEST RESULTS", "GTR vs NREV: LRT = ", 2*(res_nrev[1][0]-res_gtr[1][0]), "\tP = ", 1-CChi2 ( 2*(res_nrev[1][0]-res_gtr[1][0]), res_nrev[1][2]-res_gtr[1][2] ), "\n" );
-	
-fprintf ( "MODELTEST RESULTS", "stGTR vs NREV: LRT = ", 2*(res_nrev[1][0]-res_stgtr[1][0]), "\tP = ", 1-CChi2 ( 2*(res_nrev[1][0]-res_stgtr[1][0]), res_nrev[1][2]-res_stgtr[1][2] ), "\n" );
-
-fprintf ("MODELTEST RESULTS", "\nAIC\n" );
-fprintf ( "MODELTEST RESULTS", "---\n" );
-	
-fprintf ( "MODELTEST RESULTS", "GTR (all parameters): ", 2*(res_gtr[1][1]) - 2*res_gtr[1][0], "\n" );
-fprintf ( "MODELTEST RESULTS", "GTR (rates only): ", 2*(res_gtr[1][2]) - 2*res_gtr[1][0], "\n" );
-fprintf ("MODELTEST RESULTS", "stGTR (all parameters): ", 2*(res_stgtr[1][1]) - 2*res_stgtr[1][0], "\n" );
-fprintf ( "MODELTEST RESULTS", "stGTR (rates only): ", 2*(res_stgtr[1][2]) - 2*res_stgtr[1][0], "\n" );
-fprintf ( "MODELTEST RESULTS", "NREV (all parameters): ", 2*(res_nrev[1][1]) - 2*res_nrev[1][0], "\n" );
-fprintf ( "MODELTEST RESULTS", "NREV (rates only): ", 2*(res_nrev[1][2]) - 2*res_nrev[1][0], "\n" ); */
-
-
-
-
-
 
 
 
