@@ -32,7 +32,7 @@ header <- dashboardHeader(titleWidth = 1250,title = "Phylogenetic Analysis: Root
 
 sidebar <- dashboardSidebar(menuItem("OWNERSHIP", tabName = "model",
                                      box(title="Developer.",background = "green",width = 150,
-                                         "The web application has been developed by Rita Sianga-Mete (PhD student) and professor Darren Martin, University of Cape Town.")),
+                                         "The web application has been developed by Rita Sianga-Mete (PhD student), University of Cape Town.")),
                             
                             
                             menuItem("ABOUT",tabName="model",box(title="Application Information",background = "green",width = 150,
