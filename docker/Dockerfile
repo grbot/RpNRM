@@ -12,6 +12,8 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get update --fix-missing && apt-get upgra
     libxt-dev \
     libssl-dev \
     libmagick++-dev \
+    libfribidi-dev \
+    libharfbuzz-dev \
     ssh \
     curl \
     && curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh \
