@@ -1,5 +1,5 @@
 # Install R version 3.6.3
-FROM r-base:4.1.0
+FROM r-base:4.2.2
 
 # Install Ubuntu packages
 ARG DEBIAN_FRONTEND=noninteractive
@@ -22,6 +22,10 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get update --fix-missing && apt-get upgra
     && conda install -y python=3 \
     && conda update conda \
     && conda clean --all --yes
+
+# There is an issue with compatibility with new OpenSSL library, need to access the older version in buildinf devtools
+RUN wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+RUN dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
 
 RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
     VERSION=$(cat version.txt)  && \
@@ -93,12 +97,5 @@ RUN ["chmod", "+x", "/usr/bin/shiny-server.sh"]
 RUN ["chmod", "+w", "/srv/shiny-server/rpnrm"]
 RUN ["chown","shiny:shiny","-R","/srv/shiny-server/rpnrm"]
 RUN ["chown","shiny:shiny","-R","/var/lib/shiny-server"]
-
-
-
-
-
-
-
 
 CMD ["/usr/bin/shiny-server.sh"]
