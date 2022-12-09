@@ -57,6 +57,8 @@ RUN R -e "BiocManager::install('magrittr')"
 RUN R -e "BiocManager::install('ggplot2')"
 RUN R -e "BiocManager::install('Biostrings')"
 RUN R -e "BiocManager::install('dplyr')"
+RUN R -e "BiocManager::install('readr')"
+RUN R -e "BiocManager::install('shinyjs')"
 RUN R -e "BiocManager::install('caper')"
 RUN R -e "BiocManager::install('geiger')"
 RUN R -e "BiocManager::install('DT')"
@@ -91,7 +93,7 @@ RUN chown -R shiny:shiny /srv/shiny-server
 
 # Copy further configuration files into the Docker image
 COPY R/shiny-server.sh /usr/bin/shiny-server.sh
-
+ENV SHINY_LOG_STDERR=1
 RUN ["chmod", "+x", "/usr/bin/shiny-server.sh"]
 
 RUN ["chmod", "+w", "/srv/shiny-server/rpnrm"]
